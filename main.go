@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	// "io"
+
+// "io"
 )
 
 func main() {
@@ -13,6 +14,7 @@ func main() {
 	data_directory_name := os.Args[len(os.Args)-1]
 
 	data_directory, err := os.Open(data_directory_name)
+
 	if err != nil {
 		panic(err)
 	} // end if
