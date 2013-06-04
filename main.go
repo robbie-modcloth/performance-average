@@ -6,21 +6,16 @@ import (
 
 // "io"
 )
-
+// This function is the wrapper for all of the action that has to go on inside each of my mini-files. 
 func main() {
 
-	fmt.Println("\tWe're inside the main func")
-
 	data_directory_name := os.Args[len(os.Args)-1]
-
 	data_directory, err := os.Open(data_directory_name)
-
 	if err != nil {
 		panic(err)
 	} // end if
 
-	fmt.Println("Directory loaded! Oh yeah!")
-
-	function1(data_directory)
+  // this line will accept the file object and handle almost everything else lol
+	compile_the_data(data_directory)
 
 } // end main func
