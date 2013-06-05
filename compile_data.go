@@ -10,20 +10,10 @@ import (
 //	"strings"
 )
 
-
-func capute_data(data_directory *os.File) {
-  data_string := compile_the_data(data_directory)
-  var data []Datum = parse_data(data_string)
-  
-  calculate_results(data)
+func capture_data(data_directory *os.File) []Datum {
+	data_string := compile_the_data(data_directory)
+	return parse_data(data_string)
 }
-
-func calculate_results(data []Datum) {}
-
-
-
-
-
 
 // This accepts a directory from the main function
 // The directory has all of the data stored in the series of files in it.
@@ -53,7 +43,6 @@ func compile_the_data(data_directory *os.File) string {
 			panic(err)
 		} // end if
 
-		// TODO: fix this!
 		defer my_file.Close()
 		// this should be a buffer...
 		buf.Write(pull_data(my_file))

@@ -17,6 +17,8 @@ func main() {
 	} // end if
 
 	// this line will accept the file object and handle almost everything else lol
-	compile_the_data(data_directory)
+	var data []Datum = capture_data(data_directory)
+
+	calculate_results(data)
 
 } // end main func
