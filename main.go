@@ -1,12 +1,13 @@
 package main
 
 import (
-	"fmt"
+	//"fmt"
 	"os"
 
 // "io"
 )
-// This function is the wrapper for all of the action that has to go on inside each of my mini-files. 
+
+// This function is the wrapper for all of the action that has to go on inside each of my mini-files.
 func main() {
 
 	data_directory_name := os.Args[len(os.Args)-1]
@@ -15,7 +16,7 @@ func main() {
 		panic(err)
 	} // end if
 
-  // this line will accept the file object and handle almost everything else lol
+	// this line will accept the file object and handle almost everything else lol
 	compile_the_data(data_directory)
 
 } // end main func
