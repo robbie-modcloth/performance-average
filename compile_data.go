@@ -10,12 +10,27 @@ import (
 //	"strings"
 )
 
+
+func capute_data(data_directory *os.File) {
+  data_string := compile_the_data(data_directory)
+  var data []Datum = parse_data(data_string)
+  
+  calculate_results(data)
+}
+
+func calculate_results(data []Datum) {}
+
+
+
+
+
+
 // This accepts a directory from the main function
 // The directory has all of the data stored in the series of files in it.
 func compile_the_data(data_directory *os.File) string {
 
 	// this reads all of the file names in the directory and stores them in a slice
-	file_names, err := (*data_directory).Readdirnames(-1)
+	file_names, err := data_directory.Readdirnames(-1)
 	if err != nil {
 		panic(err)
 		fmt.Println("PAAAAAANNNNIIIIIIC!")
