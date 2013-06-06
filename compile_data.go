@@ -1,15 +1,14 @@
 package main
 
 import (
-	//	"bufio"
 	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
-
-//	"strings"
 )
 
+// This function consolidates the data in all of the individual files into a buffer, then into a string
+// After, the data is converted from type string into type Datum, which is a struct representing the four fields of the CSV
 func capture_data(data_directory *os.File) []Datum {
 	data_string := compile_the_data(data_directory)
 	return parse_data(data_string)
@@ -19,43 +18,44 @@ func capture_data(data_directory *os.File) []Datum {
 // The directory has all of the data stored in the series of files in it.
 func compile_the_data(data_directory *os.File) string {
 
-	// this reads all of the file names in the directory and stores them in a slice
-	file_names, err := data_directory.Readdirnames(-1)
-	if err != nil {
-		panic(err)
-		fmt.Println("PAAAAAANNNNIIIIIIC!")
-	} // end if
-
-	// this is to get the pwd from within the new directory
-	base_dir := (*data_directory).Name()
-
 	// initializes a buffer to store all the data
 	var buf_arr []byte
 	buf := bytes.NewBuffer(buf_arr)
 
-	// for each file in the directory...
-	for file := range file_names {
+	// this is to get the pwd from within the new directory
+	base_dir := data_directory.Name()
 
-		// get its full name, composed of the name of the directory above concat the name of that file from within the directory
-		individual_file := base_dir + "/" + file_names[file]
-		my_file, err := os.Open(individual_file)
-		if err != nil {
-			panic(err)
-		} // end if
+	// this reads all of the file names in the directory and stores them in a slice
+	if partial_file_names, err := data_directory.Readdirnames(-1); err != nil {
+		panic(err)
 
-		defer my_file.Close()
-		// this should be a buffer...
-		buf.Write(pull_data(my_file))
+	} else {
 
-	} // end for loop
+		list_of_file_names := get_complete_file_names(base_dir, partial_file_names)
 
-	fmt.Println("The buffer has successfully been created!")
+		// for each file in the directory...
+		for file := range list_of_file_names {
 
+			// open the file
+			my_file, err := os.Open(list_of_file_names[file])
+			if err != nil {
+				panic(err)
+			} // end if
+			defer my_file.Close()
+
+			// then grab all the data
+			buf.Write(pull_data(my_file))
+
+		} // end for loop
+
+	} // end else
+
+	fmt.Println("The data has been successfully compiled!")
 	return buf.String()
 
 } // end function
 
-// This function accepts one file and reads each line into a buffer, then returns the buffer.... errr... string.
+// This function accepts one file and reads the whole thing into a byte array and returns it.
 func pull_data(file *os.File) []byte {
 
 	byte_array, err := ioutil.ReadAll(file)
@@ -67,3 +67,15 @@ func pull_data(file *os.File) []byte {
 	return byte_array
 
 } // end function
+
+func get_complete_file_names(base_dir string, partial_file_names []string) []string {
+
+	names := make([]string, len(partial_file_names))
+
+	for index := range partial_file_names {
+		names[index] = base_dir + "/" + partial_file_names[index]
+	} // end for loop
+
+	return names
+
+} // end func

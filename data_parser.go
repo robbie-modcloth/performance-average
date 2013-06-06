@@ -12,6 +12,9 @@ type Datum struct {
 	errors                     string
 }
 
+// The function parses the string into individual pieces of data
+// :param -- data_string, a large string with each datum delimited with "\n", and each element of the datum delimited with ","
+// :return -- a slice of type datum, representing the list of all data
 func parse_data(data_string string) []Datum {
 
 	string_array := strings.Split(data_string, "\n")
@@ -27,6 +30,7 @@ func parse_data(data_string string) []Datum {
 			continue
 		} // end if
 
+		// initializes the datum instance
 		data_instance := Datum{}
 		data_instance.date = parsed_line[0]
 		data_instance.execution_time_in_seconds, _ = strconv.ParseFloat(parsed_line[1], 64)
