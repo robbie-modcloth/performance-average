@@ -8,17 +8,14 @@ import (
 func main() {
 
 	// access the name of the directory and create a file pointer to it
-	data_directory_name := os.Args[len(os.Args)-1]
+	dataDirectoryName := os.Args[len(os.Args)-1]
 
-	if data_directory, err := os.Open(data_directory_name); err != nil {
+	if dataDirectory, err := os.Open(dataDirectoryName); err != nil {
 		panic(err)
 	} else {
 
-		// this line will accept the file object and return all of the data
-		var data []Datum = capture_data(data_directory)
-
-		// this will crunch all of the numbers
-		calculate_results(data)
+		var data []Datum = captureData(dataDirectory)
+		calculateAverageDuration(data)
 
 	} // end else
 
