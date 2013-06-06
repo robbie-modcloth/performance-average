@@ -24,3 +24,5 @@ func calculate_results(data []Datum) {
 	fmt.Println("The average time in miliseconds including network latency is " + strconv.FormatFloat(avg_total_latency, 'f', 10, 64))
 
 } // end func
+
+
