@@ -14,8 +14,8 @@ func main() {
 		panic(err)
 	} else {
 
-		var data []Datum = captureData(dataDirectory)
-		calculateAverageDuration(data)
+		compileTheData(dataDirectory)
+		
 
 	} // end else
 
