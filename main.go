@@ -15,7 +15,6 @@ func main() {
 	} else {
 
 		compileTheData(dataDirectory)
-		
 
 	} // end else
 
