@@ -22,8 +22,7 @@ var myChanList *chanList = &chanList{make(chan bool), make(chan float64, 1000), 
 func compileTheData(dataDirectory *os.File) {
 
 	listOfFileNames := getCompleteFileNames(dataDirectory)
-	fileChannel, _ := getAllFiles(listOfFileNames)
-	numFiles := 0
+	fileChannel, numFiles := getAllFiles(listOfFileNames)
 
 	for file := range fileChannel {
 
@@ -32,13 +31,10 @@ func compileTheData(dataDirectory *os.File) {
 		// this makes n goroutines, where n is the number of files in the channel
 		go writeToChans(file)
 
-		numFiles++
-
 	} // end for loop
 
 	for i := 0; i < numFiles; i++ {
 		<-myChanList.done
-//		fmt.Print(i)
 	} // end for loop
 
 	//	fmt.Println(<-myChanList.resultsLen)
@@ -103,6 +99,7 @@ func calcPerfNumbers(file *os.File) (total float64, totalWLatency float64, numLi
 	for ok := scanner.Scan(); ok; ok = scanner.Scan() {
 
 		txt = scanner.Text()
+		///		fmt.Println(txt)
 		val1, val2 = parseLine(txt)
 		total += val1
 		totalWLatency += val2
@@ -123,10 +120,8 @@ func parseLine(str string) (time, timeWLatency float64) {
 
 	dataSlice := make([]string, 4)
 
-  
-
 	for ok, index := scanner.Scan(), 0; ok; ok = scanner.Scan() {
-    dataSlice[index] = scanner.Text()
+		dataSlice[index] = scanner.Text()
 		index++
 	} // end for loop
 

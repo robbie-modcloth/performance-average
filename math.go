@@ -5,20 +5,21 @@ import (
 	"strconv"
 ) // end import
 
-// This function accepts a list of Datum structs and computes with their values, producing the average.
 func calculateAverageDuration(data *chanList) {
 
 	var total float64 = 0.0
 	var totalIncludingLatency float64 = 0.0
 	var totalNumData int = 0
 
-	fmt.Println(len(data.resultsTotal1))
+	var val float64
 
-	for datum := 0; datum < len(data.resultsTotal1); datum++ {
-		total += <-data.resultsTotal1                 // adds up the total execution time w/o latency
+	for datum := 0; datum < 1+len(data.resultsTotal1); datum++ {
+		val = <-data.resultsTotal1
+		total += val
+		///total += <-data.resultsTotal1                 // adds up the total execution time w/o latency
 		totalIncludingLatency += <-data.resultsTotal2 // adds up the total execution time w/ latency
 		totalNumData += <-data.resultsLen
-		///fmt.Println(strconv.FormatFloat(total, 'f', 'f', 64))
+		fmt.Println(strconv.FormatFloat(val, 'f', 'f', 64))
 	} // end for loop
 
 	avgTotal := total / float64(totalNumData) // calculates the average
