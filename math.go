@@ -18,7 +18,7 @@ func calculateAverageDuration(data *chanList) {
 		total += <-data.resultsTotal1                 // adds up the total execution time w/o latency
 		totalIncludingLatency += <-data.resultsTotal2 // adds up the total execution time w/ latency
 		totalNumData += <-data.resultsLen
-		fmt.Println(strconv.FormatFloat(total, 'f', 'f', 64))
+		///fmt.Println(strconv.FormatFloat(total, 'f', 'f', 64))
 	} // end for loop
 
 	avgTotal := total / float64(totalNumData) // calculates the average

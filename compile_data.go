@@ -17,49 +17,54 @@ type chanList struct {
 	resultsLen    chan int
 } // end struct
 
-var myChanList *chanList = &chanList{}
+var myChanList *chanList = &chanList{make(chan bool), make(chan float64, 1000), make(chan float64, 1000), make(chan int, 1000)}
 
 func compileTheData(dataDirectory *os.File) {
 
-	if partialFileNames, err := dataDirectory.Readdirnames(-1); err != nil {
-		panic(err)
-	} else {
+	listOfFileNames := getCompleteFileNames(dataDirectory)
+	fileChannel, _ := getAllFiles(listOfFileNames)
+	numFiles := 0
 
-		baseDir := dataDirectory.Name()
-		listOfFileNames := getCompleteFileNames(baseDir, partialFileNames)
-		fileChannel, _ := getAllFiles(listOfFileNames)
+	for file := range fileChannel {
 
-		myChanList = &chanList{make(chan bool), make(chan float64, 1000), make(chan float64, 1000), make(chan int, 1000)}
+		// TODO: revise file channels so that one is receive only and the other is send only -- stronger compile-time protection
 
-		for file := range fileChannel {
+		// this makes n goroutines, where n is the number of files in the channel
+		go writeToChans(file)
 
-			// TODO: revise file channels so that one is receive only and the other is send only
-			go writeToChans(file)
+		numFiles++
 
-		} // end for loop
+	} // end for loop
 
-		for i := range fileChannel {
-			<-myChanList.done
-			fmt.Print(i)
-		} // end for loop
+	for i := 0; i < numFiles; i++ {
+		<-myChanList.done
+//		fmt.Print(i)
+	} // end for loop
 
-	} // end else
+	//	fmt.Println(<-myChanList.resultsLen)
 
-	fmt.Println(<-myChanList.resultsLen)
-
-	fmt.Println("The data has been successfully compiled!")
+	fmt.Println("The data has been successfully compiled")
 
 	calculateAverageDuration(myChanList)
 
 } // end function
 
-func getCompleteFileNames(baseDir string, partialFileNames []string) []string {
+func getCompleteFileNames(directory *os.File) []string {
 
-	names := make([]string, len(partialFileNames))
+	baseDir := directory.Name()
+	var names []string
 
-	for index := range partialFileNames {
-		names[index] = baseDir + "/" + partialFileNames[index]
-	} // end for loop
+	if partialFileNames, err := directory.Readdirnames(-1); err != nil {
+		panic(err)
+	} else {
+
+		names = make([]string, len(partialFileNames))
+
+		for index := range partialFileNames {
+			names[index] = baseDir + "/" + partialFileNames[index]
+		} // end for loop
+
+	} // end else
 
 	return names
 
@@ -118,8 +123,10 @@ func parseLine(str string) (time, timeWLatency float64) {
 
 	dataSlice := make([]string, 4)
 
+  
+
 	for ok, index := scanner.Scan(), 0; ok; ok = scanner.Scan() {
-		dataSlice[index] = scanner.Text()
+    dataSlice[index] = scanner.Text()
 		index++
 	} // end for loop
 
@@ -134,7 +141,7 @@ func ScanLinesForComma(data []byte, atEOF bool) (advance int, token []byte, err 
 		return 0, nil, nil
 	}
 	if i := bytes.IndexByte(data, ','); i >= 0 {
-		// We have a full newline-terminated line.
+		// We have a full comma-deliminated statement.
 		return i + 1, data[0:i], nil
 	}
 	// If we're at EOF, we have a final, non-terminated line. Return it.
